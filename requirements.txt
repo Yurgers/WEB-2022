@@ -6,3 +6,4 @@ SQLAlchemy==1.4.40
 paramiko==2.11.0
 kafka-python==2.0.2
 #pip install "passlib[bcrypt]"
+#pip install "python-jose[cryptography]"
