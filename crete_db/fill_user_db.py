@@ -4,7 +4,6 @@ from service.password import get_password_hash
 from src.database import Session
 from src.models import User
 from datetime import timezone
-import datetime.date
 
 
 fake = Faker('ru_RU')
