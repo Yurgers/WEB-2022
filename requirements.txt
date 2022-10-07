@@ -1,0 +1,7 @@
+python-multipart==0.0.5
+#pip install "fastapi[all]"
+#pip install psycopg2-binary
+#pip install sqlalchemy
+SQLAlchemy==1.4.40
+paramiko==2.11.0
+kafka-python==2.0.2
