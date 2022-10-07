@@ -1,4 +1,6 @@
 from faker import Faker
+
+from service.password import get_password_hash
 from src.database import Session
 from src.models import User
 from datetime import timezone
@@ -15,7 +17,7 @@ for i in range(100):
 
     user = User(
         username=profile['username'],
-        password='secret',
+        password=get_password_hash('secret'),
         name=profile['name'],
         email=profile['mail'],
         gender=profile['sex'],
