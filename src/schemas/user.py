@@ -4,10 +4,11 @@ import datetime
 class BaseUser(BaseModel):
     username: str
     name: str
-    email: str
-    gender: str
-    birthdate: datetime.date
+    email: str | None
+    gender: str | None
+    birthdate: datetime.date | None
     is_active: bool
+    publicKey: str | None
 
 
 class UserCreate(BaseUser):
@@ -20,6 +21,7 @@ class UserUpdate(BaseUser):
 
 class User(BaseUser):
     id: int
+    privateKey: str
 
     class Config:
         orm_mode = True
@@ -38,3 +40,7 @@ class PublicUser(BaseUser):
     class Config:
         orm_mode = True
 
+
+class WalletCreate(BaseModel):
+    privateKey: str
+    publicKey: str

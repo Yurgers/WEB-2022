@@ -4,7 +4,7 @@ from jose import JWTError
 from starlette import status
 
 from ..schemas.user import User
-from ..schemas.auth import Token, TokenData
+from ..schemas.auth import Token, TokenData, LoginData
 from ..services.auth import AuthServices, service_init, get_jwt_user
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -18,15 +18,16 @@ router = APIRouter(
                },
 )
 
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
 
 def get_current_user(token: str = Depends(oauth2_scheme),
                      service: AuthServices = Depends(service_init)
                      ):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         username: str = get_jwt_user(token)
         if username is None:
@@ -48,6 +49,17 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = service.get_access_token(username=form_data.username, password=form_data.password)
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/login", response_model=TokenData)
+async def login(login: LoginData,
+                service: AuthServices = Depends(service_init)
+                ):
+    user = service.get_user_by_username(login.username)
+    if not user:
+        raise credentials_exception
+
+    return TokenData(username=login.username)
 
 
 @router.post("/me", response_model=User)

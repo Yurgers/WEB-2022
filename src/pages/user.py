@@ -1,7 +1,7 @@
 from fastapi import Depends, APIRouter, HTTPException
 
 from .auth import get_current_user
-from ..schemas.user import User, UserCreate, UserUpdate, Login
+from ..schemas.user import User, UserCreate, UserUpdate, Login, PublicUser
 from ..services.user import service_init, UserServices
 
 router = APIRouter(
@@ -14,17 +14,19 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[User])
+# @router.options('/')
+# @router.head('/')
+@router.get("/", response_model=list[PublicUser])
 def get_examples(
-        skip: int | None = None,
-        limit: int | None = None,
         service: UserServices = Depends(service_init),
-        current_user: User = Depends(get_current_user)
+        # current_user: User = Depends(get_current_user)
 ):
-    """Показывает список ..."""
-    return service.get_many(skip=skip, limit=limit)
+    """Показывает список пользователей"""
+    return service.get_many_all()
 
 
+# @router.options('/logins')
+# @router.head('/logins')
 @router.get("/logins", response_model=list[Login])
 def get_examples(
         service: UserServices = Depends(service_init)
@@ -33,11 +35,12 @@ def get_examples(
     return service.get_many_all()
 
 
-@router.get("/{obj_id}", response_model=User)
-def get_example(obj_id: int,
-                service: UserServices = Depends(service_init)
-                ):
+# @router.options('/{obj_id}')
+# @router.head('/{obj_id}')
+@router.get("/{username}", response_model=PublicUser)
+def get_user_by_username(username: str,
+                         service: UserServices = Depends(service_init)
+                         ):
     """Показывает информацю о ..."""
-    print(service.get(obj_id).__dict__)
 
-    return service.get(obj_id)
+    return service.get_user_by_username(username)

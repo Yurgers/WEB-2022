@@ -17,6 +17,8 @@ class User(Base):
     gender = Column(String(1), unique=True, nullable=False)
     birthdate = Column(Integer)
     is_active = Column(Boolean, default=1)
+    privateKey = Column(String, unique=True)
+    publicKey = Column(String, unique=True)
 
     def __repr__(self):
         return f'{self.__class__.__name__} (id={self.id}, name={self.username})'

@@ -6,6 +6,7 @@ from starlette import status
 
 from service.password import verify_password
 from src import models
+from src.database import Session
 from src.services.user import UserServices
 
 # openssl rand -hex 32
@@ -27,14 +28,25 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-def  get_jwt_user(token):
-
+def get_jwt_user(token):
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
     return payload.get("sub")
 
-class AuthServices(UserServices):
 
+def get_user_by_username(username: str) -> models.User:
+    session = Session()
+    user = session.query(models.User).filter(models.User.username == username).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+
+    return user
+
+
+class AuthServices(UserServices):
     def get_access_token(self, username: str, password: str):
         user = self.authenticate_user(username, password)
 
