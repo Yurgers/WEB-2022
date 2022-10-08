@@ -1,22 +1,15 @@
-import json
-
 from fastapi import Depends, HTTPException, status
 import requests
 
-from .auth import get_user_by_username
-from .base_service import BaceService
 from .user import UserServices
 from .. import models
-from ..database import Session, get_session
-from ..schemas.user import UserCreate, UserUpdate, WalletCreate
 
 BASE_URL = 'https://hackathon.lsp.team/hk'
 
 
 class WalletServices(UserServices):
-
     def create_wallet(self, username: str):
-        current_user = self.session.query(models.User).filter(models.User.username == username).first()
+        current_user = self.get_user_by_username(username)
 
         if current_user.publicKey:
             raise HTTPException(
@@ -27,16 +20,47 @@ class WalletServices(UserServices):
         url = BASE_URL + "/v1/wallets/new"
 
         resp = requests.post(url=url)
-        print(resp.json())
 
         current_user.publicKey = resp.json()['publicKey']
         current_user.privateKey = resp.json()['privateKey']
-
-        print(current_user.__dict__)
-
         self.session.commit()
 
         return resp.json()
+
+    def is_publicKey(self, publicKey):
+        if not publicKey:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="У пользователя еще нет Кошелека"
+            )
+
+        return True
+
+    def show_balance_nft(self, username):
+        current_user = self.get_user_by_username(username)
+        self.is_publicKey(current_user.publicKey)
+
+        url = BASE_URL + f"/v1/wallets/{current_user.publicKey}/nft/balance/"
+
+        resp = requests.get(url=url)
+        print(resp.json())
+
+        return resp.json()
+
+
+
+
+    def show_balance(self, username):
+        current_user = self.get_user_by_username(username)
+        self.is_publicKey(current_user.publicKey)
+
+        url = BASE_URL + f"/v1/wallets/{current_user.publicKey}/balance"
+
+        resp = requests.get(url=url)
+        print(resp.json())
+
+        return resp.json()
+
 
 def service_init(servise: WalletServices = Depends()):
     servise.set_model(models.User)

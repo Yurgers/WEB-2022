@@ -1,23 +1,21 @@
 from pydantic import BaseModel, validator
 import datetime
 
-class BaseWallet(BaseModel):
-    pass
 
 
-class WalletCreate(BaseModel):
+class Wallet(BaseModel):
     privateKey: str
     publicKey: str
 
 
-class WalletUpdate(BaseWallet):
-    pass
+class WalletBalance(BaseModel):
+    maticAmount: float
+    coinsAmount: float
+
+class NFT(BaseModel):
+    URI: str
+    tokens: list[int]
 
 
-class Wallet(BaseWallet):
-
-
-    class Config:
-        extra = 'allow'
-        orm_mode = True
-
+class WalletBalanceNFT(BaseModel):
+    balance: list[NFT]
