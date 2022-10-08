@@ -8,6 +8,21 @@ BASE_URL = 'https://hackathon.lsp.team/hk'
 
 
 class WalletServices(UserServices):
+
+
+    def check_status_code(self, resp):
+        if resp.status_code >= 500:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Удаленные сервис недоступен"
+            )
+        if resp.status_code >= 400:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=resp.json()
+            )
+        return True
+
     def create_wallet(self, username: str):
         current_user = self.get_user_by_username(username)
 
@@ -20,6 +35,9 @@ class WalletServices(UserServices):
         url = BASE_URL + "/v1/wallets/new"
 
         resp = requests.post(url=url)
+        self.check_status_code(resp)
+
+
 
         current_user.publicKey = resp.json()['publicKey']
         current_user.privateKey = resp.json()['privateKey']
@@ -43,6 +61,7 @@ class WalletServices(UserServices):
         url = BASE_URL + f"/v1/wallets/{current_user.publicKey}/nft/balance/"
 
         resp = requests.get(url=url)
+        self.check_status_code(resp)
         print(resp.json())
 
         return resp.json()
@@ -57,6 +76,7 @@ class WalletServices(UserServices):
         url = BASE_URL + f"/v1/wallets/{current_user.publicKey}/balance"
 
         resp = requests.get(url=url)
+        self.check_status_code(resp)
         print(resp.json())
 
         return resp.json()
