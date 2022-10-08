@@ -1,5 +1,5 @@
-from pydantic import BaseModel, validator
-import datetime
+from pydantic import BaseModel
+
 
 class Token(BaseModel):
     access_token: str
@@ -8,6 +8,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
+
 
 class LoginData(BaseModel):
     username: str

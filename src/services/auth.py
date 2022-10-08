@@ -28,7 +28,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-def get_jwt_user(token):
+def get_user_is_jwt(token):
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
     return payload.get("sub")

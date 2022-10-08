@@ -5,7 +5,7 @@ from starlette import status
 
 from ..schemas.user import User
 from ..schemas.auth import Token, TokenData, LoginData
-from ..services.auth import AuthServices, service_init, get_jwt_user
+from ..services.auth import AuthServices, service_init, get_user_is_jwt, get_user_by_username
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
@@ -26,16 +26,15 @@ credentials_exception = HTTPException(
 
 
 def get_current_user(token: str = Depends(oauth2_scheme),
-                     service: AuthServices = Depends(service_init)
                      ):
     try:
-        username: str = get_jwt_user(token)
+        username: str = get_user_is_jwt(token)
         if username is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    user = service.get_user_by_username(username=username)
+    user = get_user_by_username(username=username)
     if user is None:
         raise credentials_exception
 
@@ -46,6 +45,7 @@ def get_current_user(token: str = Depends(oauth2_scheme),
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                                  service: AuthServices = Depends(service_init)
                                  ):
+    '''Логин через JWT'''
     access_token = service.get_access_token(username=form_data.username, password=form_data.password)
 
     return {"access_token": access_token, "token_type": "bearer"}
@@ -55,6 +55,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 async def login(login: LoginData,
                 service: AuthServices = Depends(service_init)
                 ):
+    """Заглушка для логина"""
+
     user = service.get_user_by_username(login.username)
     if not user:
         raise credentials_exception
@@ -63,5 +65,6 @@ async def login(login: LoginData,
 
 
 @router.post("/me", response_model=User)
-def read_users_me(current_user: User = Depends(get_current_user)):
+def read_me(current_user: User = Depends(get_current_user)):
+    """Информация о владельце токена"""
     return current_user

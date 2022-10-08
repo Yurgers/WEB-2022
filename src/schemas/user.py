@@ -1,6 +1,7 @@
 from pydantic import BaseModel, validator
 import datetime
 
+
 class BaseUser(BaseModel):
     username: str
     name: str
@@ -25,6 +26,7 @@ class User(BaseUser):
 
     class Config:
         orm_mode = True
+
 
 class Login(BaseModel):
     username: str
