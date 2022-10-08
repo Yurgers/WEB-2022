@@ -73,6 +73,10 @@ class WalletServices(UserServices):
 
         return resp.json()
 
+#/v1/transfers/matic
+#/v1/transfers/nft
+
+
     def transfers_ruble(self, from_username, to_username, amount: float):
         from_current_user = self.get_user_by_username(from_username)
         to_current_user = self.get_user_by_username(to_username)

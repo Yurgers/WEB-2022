@@ -4,8 +4,10 @@ from jose import JWTError
 from starlette import status
 
 from ..schemas.user import User
+from ..services.user import get_user_by_username
 from ..schemas.auth import Token, TokenData, LoginData
-from ..services.auth import AuthServices, service_init, get_user_is_jwt, get_user_by_username
+from ..services.auth import AuthServices, service_init, get_user_is_jwt
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
