@@ -12,17 +12,13 @@ from src.services.user import UserServices
 # openssl rand -hex 32
 SECRET_KEY = "4a7c28970f10b3a9f798647ecc91c27703615bcbdb54f1c78393cda5654773d9"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
-# session = Session()
-
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+    expire = datetime.utcnow() + expires_delta
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -34,16 +30,6 @@ def get_user_is_jwt(token):
     return payload.get("sub")
 
 
-def get_user_by_username(username: str) -> models.User:
-    session = Session()
-    user = session.query(models.User).filter(models.User.username == username).first()
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND
-        )
-
-    return user
 
 
 class AuthServices(UserServices):

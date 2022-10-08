@@ -1,5 +1,4 @@
 from pydantic import BaseModel, validator
-import datetime
 
 
 class Wallet(BaseModel):
@@ -29,6 +28,7 @@ class TransfersData(BaseModel):
 
 class TransactionHash(BaseModel):
     transaction: str
+
 
 class StatusData(BaseModel):
     status: str

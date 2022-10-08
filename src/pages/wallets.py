@@ -1,6 +1,5 @@
 from fastapi import Depends, APIRouter, HTTPException
 
-
 from ..schemas.auth import TokenData
 from ..schemas.wallets import Wallet, WalletBalance, WalletBalanceNFT, TransfersData, TransactionHash, StatusData
 from ..services.wallets import WalletServices, service_init
@@ -46,11 +45,11 @@ def show_balance_nft(
 
 
 @router.post("/transfers/ruble", response_model=TransactionHash)
-def show_balance_nft(
+def transfers_ruble(
         data: TransfersData,
         service: WalletServices = Depends(service_init)
 ):
-    """Сделать перевод между пользователей"""
+    """Сделать перевод Digital Ruble между пользователей"""
     return service.transfers_ruble(data.from_username, data.to_username, data.amount)
 
 
