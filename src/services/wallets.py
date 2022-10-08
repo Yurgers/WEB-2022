@@ -9,7 +9,6 @@ BASE_URL = 'https://hackathon.lsp.team/hk'
 
 class WalletServices(UserServices):
 
-
     def check_status_code(self, resp):
         if resp.status_code >= 500:
             raise HTTPException(
@@ -37,8 +36,6 @@ class WalletServices(UserServices):
         resp = requests.post(url=url)
         self.check_status_code(resp)
 
-
-
         current_user.publicKey = resp.json()['publicKey']
         current_user.privateKey = resp.json()['privateKey']
         self.session.commit()
@@ -65,9 +62,6 @@ class WalletServices(UserServices):
         print(resp.json())
 
         return resp.json()
-
-
-
 
     def show_balance(self, username):
         current_user = self.get_user_by_username(username)
