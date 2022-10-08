@@ -3,7 +3,6 @@ import datetime
 
 class BaseUser(BaseModel):
     username: str
-    password: str
     name: str
     email: str
     gender: str
@@ -12,7 +11,7 @@ class BaseUser(BaseModel):
 
 
 class UserCreate(BaseUser):
-    pass
+    password: str
 
 
 class UserUpdate(BaseUser):
@@ -31,3 +30,11 @@ class Login(BaseModel):
     class Config:
         extra = 'allow'
         orm_mode = True
+
+
+class PublicUser(BaseUser):
+    id: int
+
+    class Config:
+        orm_mode = True
+
