@@ -7,6 +7,7 @@ COPY requirements.txt requirements.txt
 
 RUN pip install --upgrade pip  &&  pip install -r requirements.txt
 
+COPY mt_web_8.db mt_web_8.db
 COPY src src
 COPY service service
 COPY run.py run.py
