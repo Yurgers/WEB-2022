@@ -44,6 +44,15 @@ def show_balance_nft(
     return service.show_balance_nft(username.username)
 
 
+@router.post("/transfers/matic", response_model=TransactionHash)
+def transfers_coin(
+        data: TransfersData,
+        service: WalletServices = Depends(service_init)
+):
+    """Сделать перевод Matic между пользователей"""
+    return service.transfers_matic(data.from_username, data.to_username, data.amount)
+
+
 @router.post("/transfers/ruble", response_model=TransactionHash)
 def transfers_ruble(
         data: TransfersData,
