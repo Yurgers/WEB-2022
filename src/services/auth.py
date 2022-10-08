@@ -30,8 +30,6 @@ def get_user_is_jwt(token):
     return payload.get("sub")
 
 
-
-
 class AuthServices(UserServices):
     def get_access_token(self, username: str, password: str):
         user = self.authenticate_user(username, password)
